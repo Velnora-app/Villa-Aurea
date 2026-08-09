@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>html{background:#211c17}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Velnora — Villa Aurea — Guide de la Villa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:opsz,wght@9..144,400&display=swap">
+<link rel="stylesheet" href="../css/velnora-shared.css">
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="icon" href="../assets/favicon-32.png">
+<meta name="theme-color" content="#211c17">
+<style>
+  .device{background:radial-gradient(120% 70% at 50% -10%, #211c17 0%, var(--ink) 55%);}
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="scroll-area" id="scroll">
+    <div class="back-affordance" id="back" onclick="location.href='01-accueil.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5 L8 12 L15 19"/></svg>Accueil</div>
+
+    <div class="page-head">
+      <div class="page-col">
+        <div class="screen-eyebrow enter">Velnora · Villa Aurea</div>
+        <h1 class="screen-title enter enter-1">Guide de la Villa</h1>
+
+        <div style="margin-top:6px;" class="enter enter-2">
+
+          <div class="glass-group-label">À l'intérieur</div>
+          <div class="glass-group">
+            <div class="acc-item">
+              <div class="glass-row" onclick="toggleAccordion(this)">
+                <div class="glass-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h3"/></svg></div>
+                <div class="gr-txt"><div class="gr-ttl">Tydom &amp; éclairages</div><div class="gr-sub">Jardin, piscine, cuisine</div></div>
+                <svg class="glass-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="acc-body"><div class="acc-body-in">La tablette murale de l'entrée pilote une partie des éclairages — jardin, piscine, porche, rampe du garage — ainsi que quelques points lumineux de la cuisine. Le reste de la villa s'allume simplement à l'interrupteur, pièce par pièce.</div></div>
+            </div>
+            <div class="acc-item">
+              <div class="glass-row" onclick="toggleAccordion(this)">
+                <div class="glass-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 3v10a4 4 0 0 0 4 4v4M8 3v7M12 3v7M16 3v18"/></svg></div>
+                <div class="gr-txt"><div class="gr-ttl">Cuisine &amp; lave-vaisselle</div><div class="gr-sub">Équipée, cycle Éco recommandé</div></div>
+                <svg class="glass-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="acc-body"><div class="acc-body-in">La cuisine est entièrement équipée, de la cafetière expresso au grille-pain. Le lave-vaisselle se trouve sous le plan de travail central ; le cycle Éco suffit largement pour un usage quotidien et reste le plus silencieux en soirée.</div></div>
+            </div>
+          </div>
+
+          <div class="glass-group-label">En extérieur</div>
+          <div class="glass-group">
+            <div class="acc-item">
+              <div class="glass-row" onclick="toggleAccordion(this)">
+                <div class="glass-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><circle cx="12" cy="7" r="3"/></svg></div>
+                <div class="gr-txt"><div class="gr-ttl">Piscine chauffée</div><div class="gr-sub">10 × 4 m, jusqu'à 28°C</div></div>
+                <svg class="glass-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="acc-body"><div class="acc-body-in">La piscine (10 × 4 m) est chauffée à 28°C de mai à septembre, parfois dès fin avril si la météo le permet. La pompe à chaleur suit la température extérieure : par une journée plus fraîche, l'eau reste en dessous de cet objectif — c'est normal, pas un défaut. Le local technique, au niveau -1, est entretenu par notre équipe pendant votre séjour.</div></div>
+            </div>
+            <div class="acc-item">
+              <div class="glass-row" onclick="toggleAccordion(this)">
+                <div class="glass-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s-5 5.5-5 10a5 5 0 0 0 10 0c0-2-1-3.5-2-5 .3 1 .3 2-.2 2.5C13.6 8 12 6 12 2z"/></svg></div>
+                <div class="gr-txt"><div class="gr-ttl">Sauna privé</div><div class="gr-sub">Niveau -1, à côté de l'espace sport</div></div>
+                <svg class="glass-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="acc-body"><div class="acc-body-in">Le sauna se trouve au niveau -1, à côté de l'espace sport. Comptez quinze à vingt minutes par séance, en vous hydratant bien avant et après. Par précaution, évitez de l'utiliser seul en cas de doute sur votre condition physique.</div></div>
+            </div>
+            <div class="acc-item">
+              <div class="glass-row" onclick="toggleAccordion(this)">
+                <div class="glass-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="14" r="7"/><path d="M7 14h10M9 11h6M12 3v4"/></svg></div>
+                <div class="gr-txt"><div class="gr-ttl">Barbecue Bastard</div><div class="gr-sub">Charbon, sur la terrasse</div></div>
+                <svg class="glass-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="acc-body"><div class="acc-body-in">Notre barbecue Bastard, sur la terrasse, fonctionne au charbon — un sac plein et des brochettes vous attendent à côté. Laissez la braise monter en température une bonne vingtaine de minutes avant de cuisiner, et laissez-le refroidir complètement avant de le refermer.</div></div>
+            </div>
+          </div>
+
+          <div class="glass-group-label">Pratique</div>
+          <div class="glass-group">
+            <div class="acc-item">
+              <div class="glass-row" onclick="toggleAccordion(this)">
+                <div class="glass-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v-3.5L6.5 8h11L20 12.5V16"/><path d="M4 16h16M8 12h8"/><circle cx="7.5" cy="16.5" r="1.6"/><circle cx="16.5" cy="16.5" r="1.6"/></svg></div>
+                <div class="gr-txt"><div class="gr-ttl">Stationnement &amp; recharge électrique</div><div class="gr-sub">Privé, borne Type 2</div></div>
+                <svg class="glass-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="acc-body"><div class="acc-body-in">Le stationnement est gratuit et privé, sur l'allée devant la villa. Une borne de recharge (prise Type 2) est installée près du garage, libre d'utilisation pendant tout votre séjour.</div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/velnora-shared.js"></script>
+<script>
+  initAssistant();
+  initBackAffordance();
+</script>
+
+</body>
+</html>

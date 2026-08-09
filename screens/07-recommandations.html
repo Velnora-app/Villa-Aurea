@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>html{background:#211c17}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Velnora — Villa Aurea — Sélection de Stéphane</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:opsz,wght@9..144,400&display=swap">
+<link rel="stylesheet" href="../css/velnora-shared.css">
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="icon" href="../assets/favicon-32.png">
+<meta name="theme-color" content="#211c17">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://a.basemaps.cartocdn.com" crossorigin>
+<style>
+  .device{background:radial-gradient(120% 70% at 50% -10%, #211c17 0%, var(--ink) 55%);}
+
+  /* ---- onglets (chips arrondis) ---- */
+  .rec-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px;margin-top:14px;}
+  .rec-tabs::-webkit-scrollbar{display:none;}
+  .rec-tab{flex-shrink:0;font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--stone-dim);padding:9px 15px;border:1px solid rgba(239,236,229,.13);border-radius:20px;cursor:pointer;white-space:nowrap;transition:color var(--duration-micro) var(--ease-signature),background-color var(--duration-micro) var(--ease-signature),border-color var(--duration-micro) var(--ease-signature);}
+  .rec-tab.active{color:var(--ink);background:var(--brass-light);border-color:var(--brass-light);}
+
+  /* ---- carte ---- */
+  .rec-map-wrap{height:170px;border:1px solid rgba(239,236,229,.1);border-radius:18px;overflow:hidden;margin:20px 0 22px;filter:saturate(.7) brightness(.9);}
+  #recMap{height:100%;width:100%;background:var(--ink-2);}
+  .leaflet-control-attribution{background:rgba(20,19,17,.75) !important;color:var(--guide) !important;font-size:8.5px !important;}
+  .leaflet-control-attribution a{color:var(--stone-dim) !important;}
+  .vln-pin{width:10px;height:10px;border-radius:50%;background:var(--brass-light);border:2px solid var(--ink);box-shadow:0 0 0 2px rgba(199,173,130,.3);}
+
+  /* ---- carte lieu (liquid glass) ---- */
+  .p-card{padding:20px 18px;margin-bottom:12px;}
+  .p-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+  .p-name{font-family:var(--font-editorial);font-size:17px;font-weight:400;color:var(--paper);line-height:1.3;}
+  .p-tag{display:inline-block;font-family:var(--font-display);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--brass-light);margin-top:6px;}
+
+  .rating{display:flex;align-items:center;gap:6px;flex-shrink:0;padding-top:2px;}
+  .stars{position:relative;display:inline-block;font-size:11px;letter-spacing:1.5px;line-height:1;}
+  .stars .stars-bg{color:rgba(239,236,229,.14);}
+  .stars .stars-fg{position:absolute;top:0;left:0;overflow:hidden;width:0;white-space:nowrap;color:var(--brass-light);}
+  .rating-num{font-family:var(--font-display);font-size:10.5px;color:var(--stone-dim);}
+
+  .p-desc{font-family:var(--font-body);font-size:13px;font-weight:300;color:var(--stone-dim);line-height:1.65;margin-top:12px;max-width:520px;}
+
+  .p-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+  .p-action{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--stone-dim);border:1px solid rgba(239,236,229,.14);border-radius:20px;padding:9px 13px;cursor:pointer;text-decoration:none;transition:color var(--duration-micro) var(--ease-signature), background-color var(--duration-micro) var(--ease-signature), border-color var(--duration-micro) var(--ease-signature);}
+  .p-action svg{width:11px;height:11px;flex-shrink:0;}
+  .p-action:active{color:var(--ink);background:var(--brass-light);border-color:var(--brass-light);}
+
+  .rec-empty{display:none;padding:44px 4px;text-align:center;font-family:var(--font-body);font-size:13px;font-weight:300;color:var(--stone-dim);}
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="scroll-area" id="scroll">
+    <div class="back-affordance" id="back" onclick="location.href='01-accueil.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5 L8 12 L15 19"/></svg>Accueil</div>
+
+    <div class="page-head">
+      <div class="page-col">
+        <div class="screen-eyebrow enter">Velnora · Villa Aurea</div>
+        <h1 class="screen-title enter enter-1">Sélection de Stéphane</h1>
+
+        <div class="rec-tabs enter enter-2" id="recTabs">
+          <div class="rec-tab active" data-cat="all">Tous</div>
+          <div class="rec-tab" data-cat="restaurants">Restaurants</div>
+          <div class="rec-tab" data-cat="plages">Plages</div>
+          <div class="rec-tab" data-cat="activites">Activités</div>
+          <div class="rec-tab" data-cat="exclusives">Expériences exclusives</div>
+        </div>
+
+        <div class="rec-map-wrap enter enter-2"><div id="recMap"></div></div>
+
+        <div id="recList" class="enter enter-3">
+
+
+          <div class="p-card glass-group enter enter-left" data-cat="restaurants" data-lat="43.0450827" data-lon="6.1472747" data-name="La Table du Lodge, Giens">
+            <div class="p-head">
+              <div><div class="p-name">La Table du Lodge</div><div class="p-tag">Restaurant gastronomique · Giens</div></div>
+              <div class="rating"><span class="stars" data-rating="4.7"><span class="stars-bg">★★★★★</span><span class="stars-fg">★★★★★</span></span><span class="rating-num">4.7</span></div>
+            </div>
+            <div class="p-desc">Cuisine de haute volée signée chef Pascal, entre influences japonaises et tradition française — la table la plus raffinée de la presqu'île, à deux pas de la villa.</div>
+            <div class="p-actions">
+              <a class="p-action" href="tel:+33494413839"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>04 94 41 38 39</a>
+              <a class="p-action" href="https://www.lelodgedesilesdor.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Site web</a>
+              <div class="p-action" onclick="openInMaps(43.0450827,6.1472747,'La Table du Lodge, Giens')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>Itinéraire</div>
+            </div>
+          </div>
+
+          <div class="p-card glass-group enter enter-right" data-cat="restaurants" data-lat="43.1261266" data-lon="6.0992074" data-name="Restaurant La Colombe, Hyères">
+            <div class="p-head">
+              <div><div class="p-name">La Colombe</div><div class="p-tag">Restaurant étoilé · Hyères</div></div>
+              <div class="rating"><span class="stars" data-rating="4.4"><span class="stars-bg">★★★★★</span><span class="stars-fg">★★★★★</span></span><span class="rating-num">4.4</span></div>
+            </div>
+            <div class="p-desc">Cuisine gastronomique inventive distinguée par le Guide Michelin, cadre élégant et service irréprochable — réservation recommandée plusieurs jours à l'avance.</div>
+            <div class="p-actions">
+              <a class="p-action" href="tel:+33494353516"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>04 94 35 35 16</a>
+              <a class="p-action" href="https://restaurantlacolombe.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Site web</a>
+              <div class="p-action" onclick="openInMaps(43.1261266,6.0992074,'Restaurant La Colombe, Hyères')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>Itinéraire</div>
+            </div>
+          </div>
+
+          <div class="p-card glass-group enter enter-left" data-cat="restaurants" data-lat="43.0384060" data-lon="6.1307560" data-name="L'Envie, par Cédric Gola, Giens">
+            <div class="p-head">
+              <div><div class="p-name">L'Envie — Cédric Gola</div><div class="p-tag">Restaurant · Village de Giens</div></div>
+              <div class="rating"><span class="stars" data-rating="4.7"><span class="stars-bg">★★★★★</span><span class="stars-fg">★★★★★</span></span><span class="rating-num">4.7</span></div>
+            </div>
+            <div class="p-desc">Table confidentielle sur la place du village, menu dégustation en cinq services — une adresse d'initiés, élégante et discrète.</div>
+            <div class="p-actions">
+              <a class="p-action" href="tel:+33494485035"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>04 94 48 50 35</a>
+              <a class="p-action" href="https://www.restaurant-cedric-gola.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Site web</a>
+              <div class="p-action" onclick="openInMaps(43.0384060,6.1307560,'L\'Envie, Giens')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>Itinéraire</div>
+            </div>
+          </div>
+
+          <div class="p-card glass-group enter enter-right" data-cat="plages" data-lat="43.0673770" data-lon="6.1474243" data-name="Le Hameau des Pesquiers, Giens">
+            <div class="p-head">
+              <div><div class="p-name">Le Hameau des Pesquiers</div><div class="p-tag">Plage privée &amp; spa 5★ · Giens</div></div>
+              <div class="rating"><span class="stars" data-rating="4.4"><span class="stars-bg">★★★★★</span><span class="stars-fg">★★★★★</span></span><span class="rating-num">4.4</span></div>
+            </div>
+            <div class="p-desc">Ecolodge 5 étoiles posé directement sur le sable, spa d'exception et accès plage privée — le flamant rose s'invite parfois en fin de journée.</div>
+            <div class="p-actions">
+              <a class="p-action" href="tel:+33494317777"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>04 94 31 77 77</a>
+              <a class="p-action" href="https://lespesquiers.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Site web</a>
+              <div class="p-action" onclick="openInMaps(43.0673770,6.1474243,'Le Hameau des Pesquiers, Giens')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>Itinéraire</div>
+            </div>
+          </div>
+
+          <div class="p-card glass-group enter enter-left" data-cat="plages" data-lat="43.0113119" data-lon="6.2330065" data-name="Plage Notre-Dame, Porquerolles">
+            <div class="p-head">
+              <div><div class="p-name">Plage Notre-Dame</div><div class="p-tag">Plage · Porquerolles</div></div>
+              <div class="rating"><span class="stars" data-rating="4.9"><span class="stars-bg">★★★★★</span><span class="stars-fg">★★★★★</span></span><span class="rating-num">4.9</span></div>
+            </div>
+            <div class="p-desc">Élue plus belle plage d'Europe — sable fin et eaux turquoise, à l'écart de l'agitation. Accessible en bateau depuis la Tour Fondue.</div>
+            <div class="p-actions">
+              <div class="p-action" onclick="openInMaps(43.0113119,6.2330065,'Plage Notre-Dame, Porquerolles')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>Itinéraire</div>
+            </div>
+          </div>
+
+          <div class="p-card glass-group enter enter-right" data-cat="activites" data-lat="43.0273850" data-lon="6.1548355" data-name="Tour Fondue">
+            <div class="p-head">
+              <div><div class="p-name">Îles d'Or depuis la Tour Fondue</div><div class="p-tag">Activité</div></div>
+              <div class="rating"><span class="stars" data-rating="4.8"><span class="stars-bg">★★★★★</span><span class="stars-fg">★★★★★</span></span><span class="rating-num">4.8</span></div>
+            </div>
+            <div class="p-desc">Embarcadère vers Porquerolles et Port-Cros — randonnée, criques secrètes et pique-nique à l'ombre des pins, à vingt minutes de bateau.</div>
+            <div class="p-actions">
+              <a class="p-action" href="tel:+33494582181"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>04 94 58 21 81</a>
+              <a class="p-action" href="https://www.tlv-tvm.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Site web</a>
+              <div class="p-action" onclick="openInMaps(43.0273850,6.1548355,'Tour Fondue, Hyères')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>Itinéraire</div>
+            </div>
+          </div>
+
+          <div class="p-card glass-group enter enter-left" data-cat="activites" data-lat="43.1019597" data-lon="6.1727583" data-name="Private Boat 83, Hyères">
+            <div class="p-head">
+              <div><div class="p-name">Sortie en bateau privé</div><div class="p-tag">Activité · Skipper privé</div></div>
+              <div class="rating"><span class="stars" data-rating="5.0"><span class="stars-bg">★★★★★</span><span class="stars-fg">★★★★★</span></span><span class="rating-num">5.0</span></div>
+            </div>
+            <div class="p-desc">Journée en mer avec skipper privé — criques confidentielles autour des îles d'Or, baignades à l'écart des foules, déjeuner à bord sur demande.</div>
+            <div class="p-actions">
+              <a class="p-action" href="tel:+33676223752"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>06 76 22 37 52</a>
+              <a class="p-action" href="https://www.privateboat83.fr/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Site web</a>
+              <div class="p-action" onclick="openInMaps(43.1019597,6.1727583,'Private Boat 83, Hyères')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>Itinéraire</div>
+            </div>
+          </div>
+
+          <div class="p-card glass-group enter enter-right" data-cat="exclusives" data-lat="42.9995622" data-lon="6.1711216" data-name="La Pinède, Mas du Langoustier">
+            <div class="p-head">
+              <div><div class="p-name">La Pinède — Mas du Langoustier</div><div class="p-tag">Expérience exclusive · Porquerolles</div></div>
+              <div class="rating"><span class="stars" data-rating="4.8"><span class="stars-bg">★★★★★</span><span class="stars-fg">★★★★★</span></span><span class="rating-num">4.8</span></div>
+            </div>
+            <div class="p-desc">Une table sélectionnée par Gault&amp;Millau, au cœur d'un domaine provençal historique depuis 1912 — à environ vingt minutes de bateau depuis la Tour Fondue.</div>
+            <div class="p-actions">
+              <a class="p-action" href="tel:+33494583009"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>04 94 58 30 09</a>
+              <a class="p-action" href="https://www.langoustier.com" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Site web</a>
+              <div class="p-action" onclick="openInMaps(42.9995622,6.1711216,'Mas du Langoustier, Porquerolles')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>Itinéraire</div>
+            </div>
+          </div>
+
+          <div class="p-card glass-group enter enter-left" data-cat="exclusives" data-name="Sortie en mer privée">
+            <div class="p-head">
+              <div><div class="p-name">Sortie en mer privée</div><div class="p-tag">Expérience exclusive · Sur demande</div></div>
+            </div>
+            <div class="p-desc">Une après-midi en mer organisée sur mesure par votre conciergerie — criques, îles et coucher de soleil au large.</div>
+            <div class="p-actions">
+              <div class="p-action" onclick="location.href='04-contacts-utiles.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>Contacter la conciergerie</div>
+            </div>
+          </div>
+
+          
+        <div class="rec-empty" id="recEmpty">Aucune adresse dans cette catégorie pour le moment.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="../js/velnora-shared.js"></script>
+<script>
+  initAssistant();
+  initBackAffordance();
+  initStarRatings();
+  initRecommandations();
+</script>
+
+</body>
+</html>
