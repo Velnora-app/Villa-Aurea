@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>html{background:#241f18}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Velnora — Villa Aurea — Départ</title>
+<link rel="stylesheet" href="../css/velnora-shared.css">
+<link rel="preload" href="../assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/fraunces-variable-latin-opsz.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="icon" href="../assets/favicon-32.png">
+<meta name="theme-color" content="#241f18">
+<style>
+  .device{background:radial-gradient(120% 70% at 50% -10%, #241f18 0%, var(--ink) 60%);}
+  .thanks{font-family:var(--font-display);font-weight:500;font-size:24px;line-height:1.35;color:var(--paper);margin:0 0 18px;}
+  .recap{font-family:var(--font-body);font-size:15px;font-weight:300;line-height:1.75;color:var(--paper-2);padding:20px 18px;margin-bottom:26px;}
+  .review{display:flex;align-items:center;gap:14px;padding:14px 15px;cursor:pointer;}
+  .review .txt{flex:1;min-width:0;font-family:var(--font-body);font-size:14px;font-weight:300;color:var(--stone-dim);line-height:1.6;}
+  .review .txt b{color:var(--paper);font-weight:400;}
+  .review .chev{width:16px;height:16px;flex-shrink:0;color:var(--stone-dim);}
+  .owner-note{margin-top:36px;padding-top:22px;border-top:1px solid var(--hair);text-align:center;}
+  .owner-note p{font-family:var(--font-body);font-size:12px;font-weight:300;color:var(--stone-dim);margin:0 0 10px;}
+  .page-head{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 64px);}
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="scroll-area" id="scroll">
+    <div class="back-affordance" id="back" onclick="location.href='01-accueil.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5 L8 12 L15 19"/></svg>Accueil</div>
+
+    <div class="page-head" style="padding-top:112px;">
+      <div class="page-col">
+        <div class="screen-eyebrow enter-auto">Départ</div>
+        <div class="thanks enter-auto enter-auto-1">Merci d'avoir choisi<br>Villa Aurea.</div>
+
+        <div class="recap glass-group enter-auto enter-auto-2">Nous espérons que ce séjour vous aura offert la parenthèse que vous cherchiez, entre mer et pins parasols. Laissez simplement les clés sur la console de l'entrée — le reste, Stéphane et son équipe s'en occupent.</div>
+
+        <a class="review glass-group enter-auto enter-auto-3" href="https://www.airbnb.fr/trips/v1" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="glass-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17.3 6.2 20l1.1-6.5L2.6 9l6.5-1L12 2l2.9 6 6.5 1-4.7 4.5 1.1 6.5z"/></svg></div>
+          <div class="txt">Un mot sur votre séjour nous ferait <b>très plaisir</b> — laissez votre avis sur Airbnb.</div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        <div class="owner-note enter-auto enter-auto-4">
+          <p>Vous souhaitez offrir cette expérience à vos voyageurs ?</p>
+          <a class="vln-btn-ghost" href="mailto:arthur.mousnier@gmail.com?subject=D%C3%A9couverte%20de%20Velnora&body=Bonjour%2C%0A%0AJe%20souhaiterais%20%C3%A9changer%20avec%20vous%20concernant%20Velnora%20afin%20d%27%C3%A9tudier%20la%20mise%20en%20place%20de%20cette%20exp%C3%A9rience%20digitale%20pour%20ma%20propri%C3%A9t%C3%A9.%0A%0ANom%20%3A%20%0AT%C3%A9l%C3%A9phone%20%3A%20%0ALien%20Airbnb%20%3A%20%0A%0ABien%20cordialement%2C">Échanger avec Velnora</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/velnora-shared.js"></script>
+<script>
+  initAssistant();
+  // Écran court — back-affordance reste fixe, pas de recul au défilement.
+
+  // Mot de fin personnalisé — seul autre rappel du prénom dans le
+  // parcours (le premier étant l'Accueil) : un bonjour et un au revoir,
+  // pas une signature répétée sur chaque écran. Repli silencieux sur le
+  // texte par défaut si l'information n'est pas disponible.
+  (function personalizeFarewell(){
+    let guest = null;
+    try{ guest = JSON.parse(localStorage.getItem('velnoraGuest') || 'null'); }catch(e){}
+    if (!guest || !guest.firstName) return;
+    const name = guest.firstName.trim();
+    const el = document.querySelector('.thanks');
+    if (el && name){
+      el.innerHTML = 'Merci d\'avoir choisi<br>Villa Aurea, ' + name.charAt(0).toUpperCase() + name.slice(1) + '.';
+    }
+  })();
+</script>
+
+</body>
+</html>

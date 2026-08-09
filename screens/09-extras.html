@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>html{background:#211c17}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Velnora — Villa Aurea — Extras &amp; Services</title>
+<link rel="stylesheet" href="../css/velnora-shared.css">
+<link rel="preload" href="../assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/fraunces-variable-latin-opsz.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="icon" href="../assets/favicon-32.png">
+<meta name="theme-color" content="#211c17">
+<style>
+  .device{background:radial-gradient(120% 70% at 50% -10%, #211c17 0%, var(--ink) 55%);}
+
+  .x-intro{font-family:var(--font-body);font-size:13.5px;font-weight:300;line-height:1.65;color:var(--stone-dim);max-width:520px;margin:0 0 6px;}
+
+  /* ---- onglets catégories (chips arrondis) ---- */
+  .x-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px;margin-top:20px;}
+  .x-tabs::-webkit-scrollbar{display:none;}
+  .x-tab{flex-shrink:0;font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--stone-dim);padding:9px 14px;border:1px solid rgba(239,236,229,.13);border-radius:20px;cursor:pointer;white-space:nowrap;transition:color var(--duration-micro) var(--ease-signature),background-color var(--duration-micro) var(--ease-signature),border-color var(--duration-micro) var(--ease-signature);}
+  .x-tab.active{color:var(--ink);background:var(--brass-light);border-color:var(--brass-light);}
+
+  .x-group-title{margin:30px 4px 11px !important;}
+  .x-group-title:first-of-type{margin-top:26px !important;}
+
+  /* ---- carte extra ---- */
+  .x-card{display:flex;align-items:flex-start;gap:14px;padding:16px;}
+  .x-card + .x-card{border-top:1px solid rgba(239,236,229,.07);}
+  .x-info{flex:1;min-width:0;}
+  .x-name{font-family:var(--font-body);font-size:15px;font-weight:400;color:var(--paper);line-height:1.35;}
+  .x-desc{font-family:var(--font-body);font-size:12.5px;font-weight:300;color:var(--stone-dim);line-height:1.55;margin-top:5px;max-width:400px;}
+  .x-price{font-family:var(--font-display);font-size:11.5px;font-weight:600;color:var(--brass-light);margin-top:9px;letter-spacing:.02em;}
+  .x-price .unit{font-family:var(--font-body);font-weight:300;color:var(--stone-dim);text-transform:none;letter-spacing:0;}
+
+  .x-stepper{display:flex;align-items:center;gap:0;flex-shrink:0;border:1px solid rgba(239,236,229,.14);border-radius:20px;height:34px;margin-top:2px;overflow:hidden;}
+  .x-stepper button{width:32px;height:32px;background:transparent;border:0;color:var(--paper-2);font-family:var(--font-display);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+  .x-stepper button:active{color:var(--ink);background:var(--brass-light);}
+  .x-stepper .x-qty-val{width:22px;text-align:center;font-family:var(--font-display);font-size:13px;color:var(--paper);font-variant-numeric:tabular-nums;}
+
+  /* ---- barre panier fixe ---- */
+  .x-cart-bar{position:fixed;left:0;right:0;bottom:0;z-index:15;padding:14px var(--space-5) calc(env(safe-area-inset-bottom,0px) + 14px);background:rgba(20,19,17,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;gap:14px;transform:translateY(110%);transition:transform 420ms var(--ease-signature);}
+  .x-cart-bar.show{transform:translateY(0);}
+  @media (min-width:720px){ .x-cart-bar{left:50%;margin-left:-240px;width:100%;max-width:480px;} }
+  .x-cart-txt{min-width:0;}
+  .x-cart-count{font-family:var(--font-display);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone-dim);}
+  .x-cart-total{font-family:var(--font-body);font-size:15.5px;color:var(--paper);margin-top:2px;}
+  .x-cart-btn{background:var(--brass-light);color:var(--ink);border:0;font-family:var(--font-display);font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:0 18px;height:42px;border-radius:20px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+  .x-cart-btn:active{opacity:.85;}
+
+  .x-faq-note{font-family:var(--font-body);font-size:12px;font-weight:300;color:var(--guide);line-height:1.6;margin-top:26px;max-width:480px;}
+
+  body.vln-cart-open .vln-fab{bottom:calc(env(safe-area-inset-bottom,0px) + 92px);}
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="scroll-area" id="scroll">
+    <div class="back-affordance" id="back" onclick="location.href='01-accueil.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5 L8 12 L15 19"/></svg>Accueil</div>
+
+    <div class="page-head">
+      <div class="page-col">
+        <div class="screen-eyebrow enter-auto">Velnora · Villa Aurea</div>
+        <h1 class="screen-title enter-auto enter-auto-1">Extras &amp; Services</h1>
+        <div class="x-intro enter-auto enter-auto-2">Enrichissez votre séjour sur simple demande. Sélectionnez les prestations qui vous intéressent, Stéphane vous confirme la disponibilité et s'occupe de tout.</div>
+
+        <div class="x-tabs enter-auto enter-auto-2" id="xTabs">
+          <div class="x-tab active" data-cat="all">Tous</div>
+          <div class="x-tab" data-cat="dejeuner">Table &amp; Gourmandises</div>
+          <div class="x-tab" data-cat="confort">Confort &amp; Chambre</div>
+          <div class="x-tab" data-cat="sejour">Séjour &amp; Horaires</div>
+          <div class="x-tab" data-cat="mer">Mer &amp; Plage</div>
+          <div class="x-tab" data-cat="bienetre">Bien-être</div>
+          <div class="x-tab" data-cat="famille">Famille &amp; Animaux</div>
+          <div class="x-tab" data-cat="techno">Techno &amp; Loisirs</div>
+          <div class="x-tab" data-cat="transport">Transport</div>
+          <div class="x-tab" data-cat="celebration">Célébrations</div>
+        </div>
+
+        <div id="xList" class="enter enter-3">
+          <div class="glass-group-label x-group-title" data-group="dejeuner" style="margin-top:0;">Table &amp; Gourmandises</div>
+          <div class="glass-group x-group" data-group="dejeuner">
+          <div class="x-card" data-cat="dejeuner" data-id="dej1" data-name="Petit-déjeuner livré en chambre" data-price="28" data-unit="/pers">
+            <div class="x-info">
+              <div class="x-name">Petit-déjeuner livré en chambre</div>
+              <div class="x-desc">Pain artisanal, viennoiseries, jus pressés et confitures maison, servis directement chez vous.</div>
+              <div class="x-price">28&nbsp;€ <span class="unit">/ pers.</span></div>
+            </div>
+            <div class="x-stepper" data-id="dej1"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="dejeuner" data-id="dej2" data-name="Panier de bienvenue gourmand" data-price="65" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Panier de bienvenue gourmand</div>
+              <div class="x-desc">Spécialités provençales et vin local, prêt à votre arrivée sur la table de la cuisine.</div>
+              <div class="x-price">65&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="dej2"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="dejeuner" data-id="dej3" data-name="Coffret fromages &amp; vins de Provence" data-price="45" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Coffret fromages &amp; vins de Provence</div>
+              <div class="x-desc">Une sélection de vignerons de Provence, à déguster sur la terrasse.</div>
+              <div class="x-price">45&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="dej3"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="dejeuner" data-id="dej4" data-name="Chef à domicile pour un dîner" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Chef à domicile pour un dîner</div>
+              <div class="x-desc">Menu sur mesure, de l'accord mets et vins jusqu'au service à table.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="dej4"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          <div class="x-card" data-cat="dejeuner" data-id="dej5" data-name="Épicerie fine pré-remplie avant arrivée" data-price="90" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Épicerie fine pré-remplie avant arrivée</div>
+              <div class="x-desc">Frigo et placards garnis selon votre liste, prêts dès votre arrivée à la villa.</div>
+              <div class="x-price">Dès 90&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="dej5"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="dejeuner" data-id="dej6" data-name="Plateau de fruits de mer, ingrédients livrés" data-price="32" data-unit="/pers">
+            <div class="x-info">
+              <div class="x-name">Plateau de fruits de mer, ingrédients livrés</div>
+              <div class="x-desc">Tout le nécessaire pour une soirée iodée, livré prêt à déguster.</div>
+              <div class="x-price">32&nbsp;€ <span class="unit">/ pers.</span></div>
+            </div>
+            <div class="x-stepper" data-id="dej6"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="dejeuner" data-id="dej7" data-name="Cave à vin, sélection sommelier" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Cave à vin, sélection sommelier</div>
+              <div class="x-desc">Une sélection de vins de la région choisie sur mesure pour votre séjour.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="dej7"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          </div>
+          <div class="glass-group-label x-group-title" data-group="confort" style="margin-top:30px;">Confort &amp; Chambre</div>
+          <div class="glass-group x-group" data-group="confort">
+          <div class="x-card" data-cat="confort" data-id="con1" data-name="Ménage supplémentaire en cours de séjour" data-price="60" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Ménage supplémentaire en cours de séjour</div>
+              <div class="x-desc">Un passage complet à la date de votre choix, sans attendre le départ.</div>
+              <div class="x-price">60&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="con1"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="confort" data-id="con2" data-name="Linge de toilette &amp; lit supplémentaire" data-price="20" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Linge de toilette &amp; lit supplémentaire</div>
+              <div class="x-desc">Un jeu complet livré et installé avant votre arrivée.</div>
+              <div class="x-price">20&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="con2"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="confort" data-id="con3" data-name="Lit bébé ou lit d'appoint" data-price="15" data-unit="/nuit">
+            <div class="x-info">
+              <div class="x-name">Lit bébé ou lit d'appoint</div>
+              <div class="x-desc">Installé dans la chambre de votre choix, literie comprise.</div>
+              <div class="x-price">15&nbsp;€ <span class="unit">/ nuit</span></div>
+            </div>
+            <div class="x-stepper" data-id="con3"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="confort" data-id="con4" data-name="Bouquet de fleurs fraîches en chambre" data-price="35" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Bouquet de fleurs fraîches en chambre</div>
+              <div class="x-desc">Composé par un fleuriste de Hyères, installé avant votre arrivée.</div>
+              <div class="x-price">35&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="con4"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          <div class="x-card" data-cat="confort" data-id="con5" data-name="Robes de chambre &amp; chaussons premium" data-price="18" data-unit="/pers">
+            <div class="x-info">
+              <div class="x-name">Robes de chambre &amp; chaussons premium</div>
+              <div class="x-desc">Un jeu par personne, installé dans chaque chambre avant votre arrivée.</div>
+              <div class="x-price">18&nbsp;€ <span class="unit">/ pers.</span></div>
+            </div>
+            <div class="x-stepper" data-id="con5"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="confort" data-id="con6" data-name="Oreillers ergonomiques au choix" data-price="12" data-unit="/pièce">
+            <div class="x-info">
+              <div class="x-name">Oreillers ergonomiques au choix</div>
+              <div class="x-desc">Ferme, moelleux ou à mémoire de forme — ajoutés à la literie existante.</div>
+              <div class="x-price">12&nbsp;€ <span class="unit">/ pièce</span></div>
+            </div>
+            <div class="x-stepper" data-id="con6"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          </div>
+          <div class="glass-group-label x-group-title" data-group="sejour" style="margin-top:30px;">Séjour &amp; Horaires</div>
+          <div class="glass-group x-group" data-group="sejour">
+          <div class="x-card" data-cat="sejour" data-id="sej1" data-name="Arrivée anticipée, dès 11h" data-price="40" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Arrivée anticipée, dès 11h</div>
+              <div class="x-desc">Prenez possession de la villa dès la matinée, sous réserve de disponibilité.</div>
+              <div class="x-price">40&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="sej1"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="sejour" data-id="sej2" data-name="Départ tardif, jusqu'à 16h" data-price="40" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Départ tardif, jusqu'à 16h</div>
+              <div class="x-desc">Profitez de la villa une après-midi de plus avant de reprendre la route.</div>
+              <div class="x-price">40&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="sej2"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="sejour" data-id="sej3" data-name="Nuit supplémentaire" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Nuit supplémentaire</div>
+              <div class="x-desc">Prolongez votre séjour, sous réserve de disponibilité de la villa.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="sej3"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          <div class="x-card" data-cat="sejour" data-id="sej4" data-name="Option zéro caution (dépôt de garantie)" data-price="25" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Option zéro caution (dépôt de garantie)</div>
+              <div class="x-desc">Aucune empreinte bancaire à votre arrivée : nous couvrons la caution habituelle de la villa.</div>
+              <div class="x-price">25&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="sej4"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="sejour" data-id="sej5" data-name="Modification de réservation" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Modification de réservation</div>
+              <div class="x-desc">Changement de dates ou du nombre de voyageurs, sous réserve de disponibilité.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="sej5"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          </div>
+          <div class="glass-group-label x-group-title" data-group="mer" style="margin-top:30px;">Mer &amp; Plage</div>
+          <div class="glass-group x-group" data-group="mer">
+          <div class="x-card" data-cat="mer" data-id="mer1" data-name="Location de paddle &amp; kayaks, livrée à la villa" data-price="25" data-unit="/jour/pers">
+            <div class="x-info">
+              <div class="x-name">Location de paddle &amp; kayaks, livrée à la villa</div>
+              <div class="x-desc">Matériel livré et ajusté sur place, pour explorer la côte à votre rythme.</div>
+              <div class="x-price">Dès 25&nbsp;€ <span class="unit">/ jour / pers.</span></div>
+            </div>
+            <div class="x-stepper" data-id="mer1"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="mer" data-id="mer2" data-name="Sortie en bateau privé, skipper inclus" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Sortie en bateau privé, skipper inclus</div>
+              <div class="x-desc">Journée en mer vers les îles d'Or, réservée selon vos disponibilités.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="mer2"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="mer" data-id="mer4" data-name="Excursion plongée &amp; snorkeling privée" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Excursion plongée &amp; snorkeling privée</div>
+              <div class="x-desc">Baptême ou exploration des criques autour des îles d'Or, sur mesure.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="mer4"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          <div class="x-card" data-cat="mer" data-id="mer5" data-name="Cours de voile ou paddle privé" data-price="65" data-unit="/h">
+            <div class="x-info">
+              <div class="x-name">Cours de voile ou paddle privé</div>
+              <div class="x-desc">Pour tous niveaux, adultes et enfants, avec prise en charge à la villa.</div>
+              <div class="x-price">Dès 65&nbsp;€ <span class="unit">/ h</span></div>
+            </div>
+            <div class="x-stepper" data-id="mer5"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="mer" data-id="mer6" data-name="Navette privée vers la plage" data-price="35" data-unit="/trajet">
+            <div class="x-info">
+              <div class="x-name">Navette privée vers la plage</div>
+              <div class="x-desc">Un aller-retour confortable, sans dépendre des horaires des navettes publiques.</div>
+              <div class="x-price">35&nbsp;€ <span class="unit">/ trajet</span></div>
+            </div>
+            <div class="x-stepper" data-id="mer6"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="mer" data-id="mer3" data-name="Session jet-ski encadrée" data-price="120" data-unit="/h">
+            <div class="x-info">
+              <div class="x-name">Session jet-ski encadrée</div>
+              <div class="x-desc">Moniteur diplômé, matériel livré à la plage la plus proche de la villa.</div>
+              <div class="x-price">Dès 120&nbsp;€ <span class="unit">/ h</span></div>
+            </div>
+            <div class="x-stepper" data-id="mer3"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="mer" data-id="mer8" data-name="Location de yacht avec équipage" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Location de yacht avec équipage</div>
+              <div class="x-desc">Journée ou demi-journée en mer, capitaine et hôtesse à bord, vers Porquerolles ou les criques des îles d'Or.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="mer8"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="mer" data-id="mer7" data-name="Panier plage, transats &amp; parasol" data-price="15" data-unit="/jour">
+            <div class="x-info">
+              <div class="x-name">Panier plage, transats &amp; parasol</div>
+              <div class="x-desc">Livrés à la villa, idéal pour une journée sur le sable en toute liberté.</div>
+              <div class="x-price">15&nbsp;€ <span class="unit">/ jour</span></div>
+            </div>
+            <div class="x-stepper" data-id="mer7"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          </div>
+          <div class="glass-group-label x-group-title" data-group="bienetre" style="margin-top:30px;">Bien-être</div>
+          <div class="glass-group x-group" data-group="bienetre">
+          <div class="x-card" data-cat="bienetre" data-id="bien1" data-name="Sauna privé mobile installé sur la terrasse" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Sauna privé mobile installé sur la terrasse</div>
+              <div class="x-desc">Un moment de détente supplémentaire, installé le temps de votre séjour.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="bien1"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="bienetre" data-id="bien2" data-name="Séance de yoga privée à la villa" data-price="70" data-unit="/h">
+            <div class="x-info">
+              <div class="x-name">Séance de yoga privée à la villa</div>
+              <div class="x-desc">Professeure certifiée, tapis fournis, sur la terrasse ou au salon.</div>
+              <div class="x-price">70&nbsp;€ <span class="unit">/ h</span></div>
+            </div>
+            <div class="x-stepper" data-id="bien2"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="bienetre" data-id="bien3" data-name="Coffret bougies &amp; huiles essentielles" data-price="38" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Coffret bougies &amp; huiles essentielles</div>
+              <div class="x-desc">Une ambiance apaisante installée dans le salon ou les chambres.</div>
+              <div class="x-price">38&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="bien3"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          <div class="x-card" data-cat="bienetre" data-id="bien4" data-name="Massage bien-être à domicile, 1h" data-price="90" data-unit="/pers">
+            <div class="x-info">
+              <div class="x-name">Massage bien-être à domicile, 1h</div>
+              <div class="x-desc">Praticienne certifiée, table de massage installée dans la chambre de votre choix.</div>
+              <div class="x-price">90&nbsp;€ <span class="unit">/ pers.</span></div>
+            </div>
+            <div class="x-stepper" data-id="bien4"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          </div>
+          <div class="glass-group-label x-group-title" data-group="famille" style="margin-top:30px;">Famille &amp; Animaux</div>
+          <div class="glass-group x-group" data-group="famille">
+          <div class="x-card" data-cat="famille" data-id="fam1" data-name="Kit bébé complet (lit, chaise haute, baignoire)" data-price="45" data-unit="/séjour">
+            <div class="x-info">
+              <div class="x-name">Kit bébé complet (lit, chaise haute, baignoire)</div>
+              <div class="x-desc">Installé avant votre arrivée, repris à votre départ.</div>
+              <div class="x-price">45&nbsp;€ <span class="unit">/ séjour</span></div>
+            </div>
+            <div class="x-stepper" data-id="fam1"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="famille" data-id="fam2" data-name="Garde d'enfants ponctuelle" data-price="22" data-unit="/h">
+            <div class="x-info">
+              <div class="x-name">Garde d'enfants ponctuelle</div>
+              <div class="x-desc">Personne de confiance, référencée par la conciergerie, sur demande.</div>
+              <div class="x-price">Dès 22&nbsp;€ <span class="unit">/ h</span></div>
+            </div>
+            <div class="x-stepper" data-id="fam2"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="famille" data-id="fam3" data-name="Forfait animal de compagnie" data-price="30" data-unit="/séjour">
+            <div class="x-info">
+              <div class="x-name">Forfait animal de compagnie</div>
+              <div class="x-desc">Panier, gamelles et tapis fournis ; ménage renforcé inclus au départ.</div>
+              <div class="x-price">30&nbsp;€ <span class="unit">/ séjour</span></div>
+            </div>
+            <div class="x-stepper" data-id="fam3"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          </div>
+          <div class="glass-group-label x-group-title" data-group="techno" style="margin-top:30px;">Techno &amp; Loisirs</div>
+          <div class="glass-group x-group" data-group="techno">
+          <div class="x-card" data-cat="techno" data-id="tec1" data-name="Cinéma extérieur sur la terrasse" data-price="75" data-unit="/soirée">
+            <div class="x-info">
+              <div class="x-name">Cinéma extérieur sur la terrasse</div>
+              <div class="x-desc">Projecteur, écran et plaids installés en plein air, face à la mer à la nuit tombée.</div>
+              <div class="x-price">75&nbsp;€ <span class="unit">/ soirée</span></div>
+            </div>
+            <div class="x-stepper" data-id="tec1"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="techno" data-id="tec2" data-name="Console de jeux &amp; sélection de jeux" data-price="25" data-unit="/séjour">
+            <div class="x-info">
+              <div class="x-name">Console de jeux &amp; sélection de jeux</div>
+              <div class="x-desc">Installée et connectée à la télévision du salon.</div>
+              <div class="x-price">25&nbsp;€ <span class="unit">/ séjour</span></div>
+            </div>
+            <div class="x-stepper" data-id="tec2"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="techno" data-id="tec3" data-name="Wifi renforcé (routeur secours 4G/5G)" data-price="20" data-unit="/séjour">
+            <div class="x-info">
+              <div class="x-name">Wifi renforcé (routeur secours 4G/5G)</div>
+              <div class="x-desc">Connexion de secours haut débit, utile en cas de télétravail.</div>
+              <div class="x-price">20&nbsp;€ <span class="unit">/ séjour</span></div>
+            </div>
+            <div class="x-stepper" data-id="tec3"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          </div>
+          <div class="glass-group-label x-group-title" data-group="transport" style="margin-top:30px;">Transport</div>
+          <div class="glass-group x-group" data-group="transport">
+          <div class="x-card" data-cat="transport" data-id="tra1" data-name="Transfert privé gare ou aéroport" data-price="90" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Transfert privé gare ou aéroport</div>
+              <div class="x-desc">Chauffeur privé depuis l'aéroport de Toulon-Hyères, Nice ou la gare de Hyères.</div>
+              <div class="x-price">Dès 90&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="tra1"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="transport" data-id="tra2" data-name="Location de voiture, livrée à la villa" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Location de voiture, livrée à la villa</div>
+              <div class="x-desc">Véhicule au choix, livré et repris sur place.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="tra2"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="transport" data-id="tra3" data-name="Voiturier pour la durée du séjour" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Voiturier pour la durée du séjour</div>
+              <div class="x-desc">Stationnement géré pour vous à chaque sortie, sur demande.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="tra3"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="transport" data-id="tra4" data-name="Transfert privé en hélicoptère" data-price="0" data-unit="" data-quote="1">
+            <div class="x-info">
+              <div class="x-name">Transfert privé en hélicoptère</div>
+              <div class="x-desc">Liaison directe depuis Nice, Cannes ou Monaco, hélistation la plus proche de la villa.</div>
+              <div class="x-price">Sur devis</div>
+            </div>
+            <div class="x-stepper" data-id="tra4"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          </div>
+          <div class="glass-group-label x-group-title" data-group="celebration" style="margin-top:30px;">Célébrations</div>
+          <div class="glass-group x-group" data-group="celebration">
+          <div class="x-card" data-cat="celebration" data-id="cel1" data-name="Décoration anniversaire ou demande en mariage" data-price="80" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Décoration anniversaire ou demande en mariage</div>
+              <div class="x-desc">Mise en scène discrète et élégante, installée avant votre retour à la villa.</div>
+              <div class="x-price">80&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="cel1"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+          <div class="x-card" data-cat="celebration" data-id="cel2" data-name="Champagne &amp; mise en place surprise" data-price="55" data-unit="">
+            <div class="x-info">
+              <div class="x-name">Champagne &amp; mise en place surprise</div>
+              <div class="x-desc">Une bouteille fraîche et une mise en place soignée, sur la terrasse ou au salon.</div>
+              <div class="x-price">55&nbsp;€</div>
+            </div>
+            <div class="x-stepper" data-id="cel2"><button data-action="minus" aria-label="Retirer">–</button><span class="x-qty-val">0</span><button data-action="plus" aria-label="Ajouter">+</button></div>
+          </div>
+
+          </div>
+          <div class="rec-empty" id="xEmpty" style="display:none;">Aucun extra dans cette catégorie pour le moment.</div>
+        </div>
+
+        <div class="glass-group-label" style="margin-top:34px;">Questions fréquentes</div>
+        <div class="glass-group">
+          <div class="acc-item" onclick="toggleAccordion(this)">
+            <div class="acc-head" style="padding:16px;"><span class="acc-title">Comment commander mes extras ?</span><svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--stone-dim);"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div class="acc-body"><div class="acc-body-in" style="padding:0 16px 18px;">Sélectionnez les prestations souhaitées ci-dessus, puis envoyez votre demande en un clic à Stéphane. Il vous confirme la disponibilité et le récapitulatif ; le règlement s'effectue ensuite directement auprès de la conciergerie.</div></div>
+          </div>
+          <div class="acc-item" onclick="toggleAccordion(this)" style="border-top-color:rgba(239,236,229,.07);">
+            <div class="acc-head" style="padding:16px;"><span class="acc-title">Sous quel délai dois-je commander ?</span><svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--stone-dim);"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div class="acc-body"><div class="acc-body-in" style="padding:0 16px 18px;">Pour le petit-déjeuner, le ménage ou le linge supplémentaire, la veille suffit largement. Pour les prestations sur devis — chef à domicile, sortie en mer, transferts — nous recommandons de vous y prendre au moins 72h à l'avance, davantage en haute saison.</div></div>
+          </div>
+          <div class="acc-item" onclick="toggleAccordion(this)" style="border-top-color:rgba(239,236,229,.07);">
+            <div class="acc-head" style="padding:16px;"><span class="acc-title">Comment fonctionne la caution ?</span><svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--stone-dim);"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div class="acc-body"><div class="acc-body-in" style="padding:0 16px 18px;">Une empreinte bancaire est habituellement demandée à l'arrivée et libérée sans frais après l'état des lieux de départ. L'option « Zéro caution » ci-dessus permet de s'en dispenser entièrement moyennant un forfait fixe.</div></div>
+          </div>
+          <div class="acc-item" onclick="toggleAccordion(this)" style="border-top-color:rgba(239,236,229,.07);">
+            <div class="acc-head" style="padding:16px;"><span class="acc-title">Le règlement est-il inclus dans la location ?</span><svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--stone-dim);"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div class="acc-body"><div class="acc-body-in" style="padding:0 16px 18px;">Non, les extras sont facturés séparément de la location et réglés directement auprès de la conciergerie, par carte ou virement, une fois votre demande confirmée.</div></div>
+          </div>
+        </div>
+
+        <div class="x-faq-note">Une envie qui ne figure pas dans cette liste ? Stéphane se fera un plaisir de l'organiser sur mesure — <a class="vln-btn-ghost" href="04-contacts-utiles.html" style="text-transform:none;letter-spacing:0;font-family:var(--font-body);font-size:12px;font-weight:300;">contactez la conciergerie</a>.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="x-cart-bar" id="xCartBar">
+    <div class="x-cart-txt">
+      <div class="x-cart-count" id="xCartCount">0 extra sélectionné</div>
+      <div class="x-cart-total" id="xCartTotal">—</div>
+    </div>
+    <button class="x-cart-btn" id="xCartBtn" onclick="xSendOrder()">Envoyer ma demande</button>
+  </div>
+</div>
+
+<script src="../js/velnora-shared.js"></script>
+<script>
+  initAssistant();
+  initBackAffordance();
+
+  // ---- Filtrage par catégorie ----
+  (function(){
+    const tabs = document.querySelectorAll('.x-tab');
+    const cards = document.querySelectorAll('.x-card');
+    const titles = document.querySelectorAll('.x-group-title');
+    const empty = document.getElementById('xEmpty');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const cat = tab.dataset.cat;
+        let visibleCount = 0;
+        cards.forEach(c => {
+          const show = (cat === 'all' || c.dataset.cat === cat);
+          c.style.display = show ? '' : 'none';
+          if (show) visibleCount++;
+        });
+        titles.forEach(t => { t.style.display = (cat === 'all' || t.dataset.group === cat) ? '' : 'none'; });
+        document.querySelectorAll('.x-group').forEach(g => { g.style.display = (cat === 'all' || g.dataset.group === cat) ? '' : 'none'; });
+        empty.style.display = visibleCount === 0 ? 'block' : 'none';
+      });
+    });
+  })();
+
+  // ---- Panier / sélection ----
+  const xCart = {};
+
+  function xFormatEUR(n){ return n.toLocaleString('fr-FR') + '\u00a0€'; }
+
+  function xUpdateBar(){
+    const cards = document.querySelectorAll('.x-card');
+    let count = 0, total = 0, hasQuote = false;
+    cards.forEach(c => {
+      const id = c.dataset.id;
+      const qty = xCart[id] || 0;
+      if (qty > 0){
+        count += qty;
+        if (c.dataset.quote){ hasQuote = true; }
+        else { total += qty * parseFloat(c.dataset.price); }
+      }
+    });
+    const bar = document.getElementById('xCartBar');
+    const countEl = document.getElementById('xCartCount');
+    const totalEl = document.getElementById('xCartTotal');
+    if (count > 0){
+      bar.classList.add('show');
+      document.body.classList.add('vln-cart-open');
+      countEl.textContent = count + (count > 1 ? ' extras sélectionnés' : ' extra sélectionné');
+      totalEl.textContent = (total > 0 ? 'Estimé ' + xFormatEUR(total) : '') + (hasQuote ? (total > 0 ? ' + devis' : 'Sur devis') : '');
+    } else {
+      bar.classList.remove('show');
+      document.body.classList.remove('vln-cart-open');
+    }
+  }
+
+  document.querySelectorAll('.x-stepper').forEach(stepper => {
+    const id = stepper.dataset.id;
+    const valEl = stepper.querySelector('.x-qty-val');
+    stepper.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const current = xCart[id] || 0;
+        const next = btn.dataset.action === 'plus' ? Math.min(current + 1, 9) : Math.max(current - 1, 0);
+        xCart[id] = next;
+        valEl.textContent = next;
+        xUpdateBar();
+      });
+    });
+  });
+
+  function xSendOrder(){
+    const cards = document.querySelectorAll('.x-card');
+    const lines = [];
+    cards.forEach(c => {
+      const id = c.dataset.id;
+      const qty = xCart[id] || 0;
+      if (qty > 0){
+        const name = c.dataset.name;
+        const suffix = c.dataset.quote ? ' (sur devis)' : ' × ' + qty;
+        lines.push('- ' + name + suffix);
+      }
+    });
+    if (lines.length === 0) return;
+
+    let guest = null;
+    try{ guest = JSON.parse(localStorage.getItem('velnoraGuest') || 'null'); }catch(e){}
+    const firstName = (guest && guest.firstName) ? guest.firstName.trim() : '';
+
+    const text = 'Bonjour Stéphane,' + (firstName ? ' ici ' + firstName + ',' : '') +
+      '\nJe souhaiterais réserver les extras suivants pour mon séjour à la Villa Aurea :\n\n' +
+      lines.join('\n') +
+      '\n\nMerci de me confirmer la disponibilité et le récapitulatif. Bien à vous.';
+
+    const waUrl = 'https://wa.me/33647821590?text=' + encodeURIComponent(text);
+    window.open(waUrl, '_blank');
+  }
+</script>
+
+</body>
+</html>
