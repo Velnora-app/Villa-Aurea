@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>html{background:#0d0c0b}
+html,body{position:fixed;inset:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Velnora — Villa Aurea</title>
+<link rel="stylesheet" href="../css/velnora-shared.css">
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="icon" href="../assets/favicon-32.png">
+<meta name="theme-color" content="#0d0c0b">
+<link rel="preload" as="image" href="../assets/images/hero-exterieur.jpg" fetchpriority="high">
+<link rel="prefetch" href="01-accueil.html">
+<style>
+  .device{background:#0d0c0b;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  .intro-bg{position:absolute;inset:0;overflow:hidden;}
+  /* ---- écran de chargement : la photo se "développe" plutôt que d'apparaître —
+     même grammaire que .img-blur/velnora-sharpen déjà utilisée ailleurs dans le
+     Design System (blur-up), pour que l'attente ressemble à une mise au point,
+     pas à un chargement technique. ---- */
+  .intro-bg img{position:absolute;inset:-8%;width:116%;height:116%;object-fit:cover;filter:blur(28px) brightness(.5) saturate(.9);opacity:0;animation:bgIn 3400ms var(--ease-signature) 500ms both;}
+  .intro-bg .veil{position:absolute;inset:0;background:
+    linear-gradient(180deg, #0d0c0b 0%, #0d0c0b 16%, transparent 30%, transparent 70%, #0d0c0b 84%, #0d0c0b 100%),
+    radial-gradient(140% 110% at 50% 42%, rgba(13,12,11,.25) 0%, rgba(13,12,11,.7) 55%, rgba(13,12,11,0) 100%);}
+  @keyframes bgIn{ from{opacity:0; transform:scale(1.055);} to{opacity:1; transform:scale(1);} }
+
+  .intro-stage{position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px;}
+
+  /* Le monogramme paraît seul en premier, sur le fond encore sombre — une
+     respiration avant que le reste de la scène ne se révèle, plutôt qu'un
+     indicateur de progression. */
+  .intro-mono{width:40px;height:40px;opacity:0;animation:logoIn 1300ms cubic-bezier(.16,1,.3,1) 260ms both;}
+  @keyframes logoIn{ from{opacity:0; transform:translateY(8px) scale(.94);} to{opacity:1; transform:translateY(0) scale(1);} }
+
+  .intro-word{margin-top:18px;font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.42em;color:var(--stone-dim);opacity:0;animation:softIn 950ms cubic-bezier(.16,1,.3,1) 900ms both;}
+  .intro-tagline{margin-top:7px;font-family:var(--font-body);font-size:10.5px;font-weight:300;letter-spacing:.02em;color:var(--guide);opacity:0;animation:softIn 950ms cubic-bezier(.16,1,.3,1) 1080ms both;}
+
+  .intro-rule{width:1px;height:38px;background:linear-gradient(var(--brass-light),transparent);margin:30px 0;transform:scaleY(0);transform-origin:top;opacity:0;animation:ruleIn 900ms cubic-bezier(.16,1,.3,1) 1350ms both;}
+  @keyframes ruleIn{ from{transform:scaleY(0);opacity:0;} to{transform:scaleY(1);opacity:.6;} }
+
+  .intro-title{font-family:var(--font-editorial);font-weight:400;font-size:29px;line-height:1.32;color:var(--paper);opacity:0;animation:softIn 1000ms cubic-bezier(.16,1,.3,1) 1700ms both;}
+  .intro-lede{margin-top:16px;max-width:290px;font-family:var(--font-body);font-size:14px;font-weight:300;line-height:1.7;color:var(--stone-dim);opacity:0;animation:softIn 1000ms cubic-bezier(.16,1,.3,1) 1980ms both;}
+
+  .intro-cta{margin-top:44px;display:inline-flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--paper);
+    border:1px solid rgba(239,236,229,.28);border-radius:2px;padding:15px 26px;cursor:pointer;
+    opacity:0;animation:softIn 1000ms cubic-bezier(.16,1,.3,1) 2300ms both;
+    transition:border-color var(--duration-standard) var(--ease-signature), background-color var(--duration-standard) var(--ease-signature), transform var(--duration-micro) var(--ease-signature);}
+  .intro-cta svg{width:13px;height:13px;transition:transform var(--duration-standard) var(--ease-signature);}
+  .intro-cta:active{transform:scale(.97);border-color:var(--brass-light);background:rgba(199,173,130,.08);}
+  .intro-cta:active svg{transform:translateX(3px);}
+
+  @keyframes softIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  @media (prefers-reduced-motion: reduce){
+    .intro-bg img,.intro-mono,.intro-word,.intro-tagline,.intro-rule,.intro-title,.intro-lede,.intro-cta{animation:none !important;opacity:1 !important;}
+    .intro-rule{transform:none !important;}
+  }
+
+  /* ---- étape concierge : recueil prénom / dates avant l'expérience ----
+     Même scène (fond, voile, monogramme), le contenu se substitue en
+     douceur à l'accroche d'ouverture — aucun nouvel écran, aucune
+     sensation de formulaire : un accueil de conciergerie. */
+  #stageIntro{transition:opacity var(--duration-page) var(--ease-signature), transform var(--duration-page) var(--ease-signature);}
+  #stageIntro.leaving{opacity:0; transform:translateY(-10px);}
+
+  .welcome-stage{position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 32px;text-align:center;}
+  .welcome-stage[hidden]{display:none;}
+  .intro-stage,.welcome-stage{min-height:100dvh;}
+
+  .welcome-eyebrow{font-family:var(--font-display);font-size:10.5px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--brass-light);opacity:0;transform:translateY(10px);}
+  .welcome-title{margin-top:16px;font-family:var(--font-editorial);font-weight:400;font-size:25px;line-height:1.34;color:var(--paper);opacity:0;transform:translateY(10px);}
+  .welcome-lede{margin-top:12px;max-width:280px;font-family:var(--font-body);font-size:13.5px;font-weight:300;line-height:1.65;color:var(--stone-dim);opacity:0;transform:translateY(10px);}
+
+  .welcome-form{margin-top:34px;width:100%;max-width:300px;text-align:left;opacity:0;transform:translateY(10px);}
+  .w-field{position:relative;margin-bottom:26px;}
+  .w-field label{display:block;font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--stone-dim);margin-bottom:10px;}
+  .w-field input{width:100%;background:transparent;border:0;border-bottom:1px solid rgba(239,236,229,.24);border-radius:0;padding:4px 2px 10px;font-family:var(--font-body);font-size:16px;font-weight:300;color:var(--paper);transition:border-color var(--duration-standard) var(--ease-signature);-webkit-appearance:none;appearance:none;color-scheme:dark;}
+  .w-field input::placeholder{color:var(--guide);font-weight:300;}
+  .w-field input:focus{outline:0;border-color:var(--brass-light);}
+  .w-field.shake input{border-color:var(--error);}
+  @keyframes wShake{ 10%,90%{transform:translateX(-1px);} 30%,70%{transform:translateX(1.5px);} 50%{transform:translateX(-1.5px);} }
+  .w-field.shake{animation:wShake 480ms cubic-bezier(.25,.1,.25,1) both;}
+
+  .w-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+
+  .welcome-cta{margin-top:6px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);
+    background:var(--brass-light);border:1px solid var(--brass-light);border-radius:2px;padding:16px 26px;cursor:pointer;
+    transition:transform var(--duration-micro) var(--ease-signature), background-color var(--duration-standard) var(--ease-signature);}
+  .welcome-cta svg{width:13px;height:13px;transition:transform var(--duration-standard) var(--ease-signature);}
+  .welcome-cta:active{transform:scale(.97); background:var(--brass);}
+  .welcome-cta:active svg{transform:translateX(3px);}
+
+  .welcome-note{margin-top:18px;font-family:var(--font-body);font-size:11px;font-weight:300;color:var(--stone-dim);opacity:0;}
+
+  .welcome-stage.active .welcome-eyebrow{animation:softIn 800ms cubic-bezier(.16,1,.3,1) 80ms both;}
+  .welcome-stage.active .welcome-title{animation:softIn 900ms cubic-bezier(.16,1,.3,1) 220ms both;}
+  .welcome-stage.active .welcome-lede{animation:softIn 900ms cubic-bezier(.16,1,.3,1) 380ms both;}
+  .welcome-stage.active .welcome-form{animation:softIn 900ms cubic-bezier(.16,1,.3,1) 540ms both;}
+  .welcome-stage.active .welcome-note{animation:softIn 900ms cubic-bezier(.16,1,.3,1) 720ms both;}
+  @media (prefers-reduced-motion: reduce){
+    .welcome-stage.active .welcome-eyebrow,.welcome-stage.active .welcome-title,.welcome-stage.active .welcome-lede,.welcome-stage.active .welcome-form,.welcome-stage.active .welcome-note{animation:none !important;opacity:1 !important;transform:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="intro-bg">
+    <img src="../assets/images/hero-exterieur.jpg" alt="" fetchpriority="high" decoding="async">
+    <div class="veil"></div>
+  </div>
+
+  <div class="intro-stage" id="stageIntro">
+    <div class="intro-mono">
+      <svg class="mono-svg" viewBox="0 0 100 100" fill="none" stroke="#efece5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="3" width="90" height="94" rx="16" ry="16"/>
+        <path d="M27,15 L50,82 L73,15"/>
+      </svg>
+    </div>
+    <div class="intro-word">VELNORA</div>
+    <div class="intro-tagline">Private experience for Villa Aurea</div>
+
+    <div class="intro-rule"></div>
+
+    <div class="intro-title">Bienvenue<br>à la Villa Aurea.</div>
+    <div class="intro-lede">Votre villa, le guide de votre séjour et nos adresses de prédilection — réunis pour que profiter soit votre seul geste.</div>
+
+    <div class="intro-cta" onclick="handleDiscover()">
+      Découvrir
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+
+  <div class="welcome-stage" id="stageWelcome" hidden>
+    <div class="welcome-eyebrow">Avant votre arrivée</div>
+    <div class="welcome-title">Quelques mots,<br>avant de vous installer.</div>
+    <div class="welcome-lede">Le temps de composer votre séjour sur mesure à la Villa Aurea.</div>
+
+    <div class="welcome-form">
+      <div class="w-field" id="fFirstName">
+        <label for="gFirstName">Prénom</label>
+        <input type="text" id="gFirstName" placeholder="Votre prénom" autocomplete="given-name">
+      </div>
+      <div class="w-row">
+        <div class="w-field" id="fArrival">
+          <label for="gArrival">Arrivée</label>
+          <input type="date" id="gArrival">
+        </div>
+        <div class="w-field" id="fDeparture">
+          <label for="gDeparture">Départ</label>
+          <input type="date" id="gDeparture">
+        </div>
+      </div>
+
+      <div class="welcome-cta" onclick="handleGuestSubmit()">
+        Accéder à mon séjour
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+
+    <div class="welcome-note">Stéphane et son équipe vous attendent.</div>
+  </div>
+</div>
+
+<script>
+  function getGuest(){
+    try{
+      const raw = localStorage.getItem('velnoraGuest');
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+
+  function handleDiscover(){
+    // Un voyageur déjà identifié (retour sur le lien) n'a pas à ressaisir
+    // ses informations : l'accueil concierge ne se présente qu'une fois.
+    const guest = getGuest();
+    if (guest && guest.firstName && guest.arrival && guest.departure){
+      location.href = '01-accueil.html';
+      return;
+    }
+    const intro = document.getElementById('stageIntro');
+    const welcome = document.getElementById('stageWelcome');
+    intro.classList.add('leaving');
+    setTimeout(() => {
+      intro.style.display = 'none';
+      welcome.hidden = false;
+      requestAnimationFrame(() => welcome.classList.add('active'));
+    }, 560);
+  }
+
+  function handleGuestSubmit(){
+    const first = document.getElementById('gFirstName').value.trim();
+    const arrival = document.getElementById('gArrival').value;
+    const departure = document.getElementById('gDeparture').value;
+
+    const fields = { fFirstName: first, fArrival: arrival, fDeparture: departure };
+    let firstInvalid = null;
+    Object.keys(fields).forEach(id => {
+      const el = document.getElementById(id);
+      if (!fields[id]){
+        el.classList.remove('shake');
+        void el.offsetWidth;
+        el.classList.add('shake');
+        if (!firstInvalid) firstInvalid = el;
+      } else {
+        el.classList.remove('shake');
+      }
+    });
+    if (firstInvalid){
+      if (navigator.vibrate) navigator.vibrate(8);
+      firstInvalid.querySelector('input').focus();
+      return;
+    }
+    if (arrival && departure && departure < arrival){
+      const dep = document.getElementById('fDeparture');
+      dep.classList.remove('shake'); void dep.offsetWidth; dep.classList.add('shake');
+      if (navigator.vibrate) navigator.vibrate(8);
+      return;
+    }
+
+    try{
+      localStorage.setItem('velnoraGuest', JSON.stringify({ firstName: first, arrival, departure }));
+    }catch(e){ /* stockage indisponible : l'expérience reste accessible avec les valeurs par défaut */ }
+
+    if (navigator.vibrate) navigator.vibrate(8);
+    location.href = '01-accueil.html';
+  }
+</script>
+
+</body>
+</html>
