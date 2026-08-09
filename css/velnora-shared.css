@@ -1,0 +1,339 @@
+/* ================================================================
+   VELNORA — Feuille de style partagée, produit voyageur
+   Source exclusive des valeurs : Design System v1.0, Brand Guidelines,
+   Wordmark définitif. Aucune valeur inventée ici.
+
+   NOTE POLICES : les polices d'origine (Suisse Int'l, Neue Haas Grotesk
+   Text, GT Sectra) n'étaient jamais chargées (aucun @font-face, aucun
+   lien CDN) — tous les écrans retombaient silencieusement sur la police
+   système. Remplacées par Inter (display/body) et Fraunces (editorial),
+   auto-hébergées en woff2 dans assets/fonts/ (@font-face ci-dessous) —
+   plus de dépendance à Google Fonts, donc plus d'aller-retour réseau
+   tiers à chaque changement d'écran. Ce sont des équivalents libres de
+   droits choisis pour le rendu, pas la décision finale de marque : si
+   les polices d'origine sont licenciées un jour, il suffit de remplacer
+   les fichiers woff2 + les 3 variables ci-dessous.
+   ================================================================ */
+
+/* ---- polices auto-hébergées (remplace Google Fonts) ----
+   Avant : chaque écran (10 documents séparés) rechargeait
+   fonts.googleapis.com + fonts.gstatic.com — 2 domaines tiers,
+   DNS + TLS + requête à chaque navigation, flash de police visible
+   (FOUT) répété à chaque tap. Fichiers identiques, servis en local
+   depuis ../assets/fonts/, mêmes sous-ensembles latin que la requête
+   Google Fonts d'origine (families Inter 300/400/500/600, Fraunces
+   variable axe opsz 9..144 à graisse 400). */
+@font-face{
+  font-family:'Inter'; font-style:normal; font-weight:300; font-display:swap;
+  src:url('../assets/fonts/inter-latin-300-normal.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Inter'; font-style:normal; font-weight:400; font-display:swap;
+  src:url('../assets/fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Inter'; font-style:normal; font-weight:500; font-display:swap;
+  src:url('../assets/fonts/inter-latin-500-normal.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Inter'; font-style:normal; font-weight:600; font-display:swap;
+  src:url('../assets/fonts/inter-latin-600-normal.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Fraunces'; font-style:normal; font-weight:100 900; font-display:swap;
+  src:url('../assets/fonts/fraunces-variable-latin-opsz.woff2') format('woff2-variations');
+}
+
+:root{
+  --ink:#141311; --ink-2:#1c1a17; --ink-3:#0d0c0b;
+  --stone:#c9c2b4; --stone-dim:#8f887a;
+  --paper:#efece5; --paper-2:#e4e0d6;
+  --brass:#9a8261; --brass-light:#c7ad82;
+  --hair:#3a372f; --guide:#6b6455;
+  --error:#b98a7a; --success:#8fae8a;
+
+  --font-display: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-body:    'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-editorial: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+  --space-3:12px; --space-4:16px; --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px;
+  --ease-signature: cubic-bezier(.16,1,.3,1);
+  --duration-micro:140ms; --duration-standard:340ms; --duration-page:560ms;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;background:var(--ink);overflow-x:hidden;}
+body{min-height:100dvh;font-family:var(--font-body);color:var(--stone);-webkit-font-smoothing:antialiased;overscroll-behavior:none;}
+.device svg{stroke-linecap:round;stroke-linejoin:round;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+}
+
+/* ---- transitions natives entre écrans (navigation multi-pages) ----
+   Un seul enregistrement suffit à activer le crossfade natif du navigateur
+   entre deux documents — remplace le rechargement brutal par défaut.
+   Support : Safari 18+, Chrome/Edge 126+. Dégradation silencieuse et
+   sans effet indésirable sur les navigateurs plus anciens (simple rechargement). */
+@view-transition{ navigation: auto; }
+
+::view-transition-old(root){ animation: velnora-vt-out 420ms var(--ease-signature) both; }
+::view-transition-new(root){ animation: velnora-vt-in 580ms var(--ease-signature) both; }
+@keyframes velnora-vt-out{ from{opacity:1; transform:scale(1);} to{opacity:0; transform:scale(.975);} }
+@keyframes velnora-vt-in{ from{opacity:0; transform:scale(1.025);} to{opacity:1; transform:scale(1);} }
+
+@media (prefers-reduced-motion: reduce){
+  ::view-transition-old(root),::view-transition-new(root){ animation:none !important; }
+}
+
+/* ---- device frame — occupe 100% de l'écran sur mobile/tablette réelle ;
+   sur grand écran (ordinateur), on recentre dans une largeur proche d'un
+   téléphone pour éviter que les photos (pensées en format portrait) ne
+   soient étirées et recadrées de façon disproportionnée. ---- */
+html,body{height:auto;min-height:100dvh;}
+.device{width:100%;height:auto;min-height:100dvh;margin:0;position:relative;overflow:visible;background:var(--ink);box-shadow:none;border:0;}
+.scroll-area{position:static;inset:auto;overflow:visible;-webkit-overflow-scrolling:auto;}
+@media (min-width:720px){
+  .device{max-width:480px;margin:0 auto;box-shadow:0 40px 90px -30px rgba(0,0,0,.8);}
+  .back-affordance{left:50%;margin-left:calc(-240px + var(--space-5));}
+}
+
+/* ---- monogramme : dessin verrouillé, V logé dans l'aperture du O ---- */
+.mono-svg{display:block;width:100%;height:100%;}
+
+/* ---- back-affordance : seul élément de nav persistant ---- */
+.back-affordance{
+  position:fixed; z-index:20; left:var(--space-5); top:calc(env(safe-area-inset-top, 0px) + 24px);
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-display); font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--paper-2);
+  background:rgba(20,19,17,.4); border:1px solid rgba(239,236,229,.14); backdrop-filter:blur(8px);
+  padding:9px 14px 9px 10px; border-radius:2px; will-change:transform;
+  transition:transform 420ms cubic-bezier(.22,1,.36,1), opacity 320ms ease;
+}
+.back-affordance svg{width:14px;height:14px;flex-shrink:0;}
+.back-affordance.receded{transform:translateY(-84px); opacity:0;}
+.back-affordance:active{border-color:var(--brass-light);}
+
+/* ---- screen-title ---- */
+.screen-title{font-family:var(--font-display);font-weight:500;font-size:22px;letter-spacing:.005em;color:var(--paper);margin:0 0 4px;}
+.screen-eyebrow{font-family:var(--font-display);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--brass-light);margin:0 0 10px;font-weight:600;}
+
+/* ---- page header commun (écrans hors Accueil) ---- */
+.page-head{padding:calc(env(safe-area-inset-top, 0px) + 88px) var(--space-5) calc(env(safe-area-inset-bottom, 0px) + var(--space-5));}
+.page-col{max-width:640px;margin:0 auto;}
+
+/* ---- entrée en fondu + translation, déclenchée au scroll (voir velnora-reveal dans le JS) ---- */
+.enter{opacity:0; transform:translateY(22px); transition:opacity .6s var(--ease-signature), transform .6s var(--ease-signature);}
+.enter.in-view{opacity:1; transform:translateY(0);}
+.enter-left{transform:translateX(-26px);}
+.enter-left.in-view{transform:translateX(0);}
+.enter-right{transform:translateX(26px);}
+.enter-right.in-view{transform:translateX(0);}
+.enter-1.in-view{transition-delay:.03s;} .enter-2.in-view{transition-delay:.10s;} .enter-3.in-view{transition-delay:.17s;} .enter-4.in-view{transition-delay:.24s;} .enter-5.in-view{transition-delay:.31s;}
+/* si JS indisponible, on ne bloque jamais le contenu */
+.no-js .enter{opacity:1; transform:none;}
+
+/* ---- carte générique translucide (glass) ---- */
+.glass-card{
+  position:relative; overflow:hidden; border-radius:18px;
+  background:linear-gradient(180deg, rgba(239,236,229,.055) 0%, rgba(239,236,229,.02) 100%);
+  border:1px solid rgba(239,236,229,.09);
+  backdrop-filter:blur(18px) saturate(140%); -webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 20px 34px -26px rgba(0,0,0,.6);
+  transition:border-color var(--duration-standard) var(--ease-signature), background-color var(--duration-standard) var(--ease-signature), transform var(--duration-standard) var(--ease-signature);
+}
+.glass-card:active{transform:scale(.985); border-color:rgba(199,173,130,.5);}
+
+/* ---- action / valeur copiable ---- */
+.copy-row{display:flex; align-items:center; gap:14px; padding:16px 18px; cursor:pointer;}
+.copy-row .ic{width:22px;height:22px;flex-shrink:0;color:var(--brass-light);}
+.copy-row .ic svg{width:100%;height:100%;}
+.copy-row .txt{flex:1;min-width:0;}
+.copy-row .eb{font-family:var(--font-display);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--stone-dim);margin-bottom:4px;}
+.copy-row .val{font-family:var(--font-body);font-size:15.5px;font-weight:400;color:var(--paper);word-break:break-word;}
+.copy-pill{font-family:var(--font-display);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone-dim);border:1px solid var(--hair);padding:5px 11px;border-radius:20px;flex-shrink:0;transition:color var(--duration-micro) var(--ease-signature), background-color var(--duration-micro) var(--ease-signature), border-color var(--duration-micro) var(--ease-signature);white-space:nowrap;}
+.copy-row:active .copy-pill{color:var(--ink);background:var(--brass-light);border-color:var(--brass-light);}
+.copy-row.copied .copy-pill{color:var(--ink);background:var(--brass-light);border-color:var(--brass-light);}
+
+/* ---- accordéon (Guide pratique, Check-in/out) ----
+   Technique grid-template-rows (0fr → 1fr) plutôt que max-height : la
+   transition s'adapte exactement à la hauteur réelle du contenu, sans
+   à-coup ni décalage de vitesse selon la longueur du texte. */
+.acc-item{border-top:1px solid var(--hair);}
+.acc-item:first-child{border-top:none;}
+.acc-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 2px; cursor:pointer; min-height:44px;}
+.acc-title{font-family:var(--font-body);font-size:15px;font-weight:400;color:var(--paper);transition:color var(--duration-standard) var(--ease-signature);}
+.acc-item.open .acc-title{color:var(--brass-light);}
+.acc-chev{width:11px;height:11px;flex-shrink:0;transition:transform 480ms var(--ease-signature);}
+.acc-item.open .acc-chev{transform:rotate(180deg);}
+.acc-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows 480ms var(--ease-signature);}
+.acc-item.open .acc-body{grid-template-rows:1fr;}
+.acc-body-in{overflow:hidden;min-height:0;padding:0 2px 20px;font-family:var(--font-body);font-size:14.5px;font-weight:300;line-height:1.7;color:var(--paper-2);opacity:0;transition:opacity 280ms var(--ease-signature);}
+.acc-item.open .acc-body-in{opacity:1;transition:opacity 380ms var(--ease-signature) 120ms;}
+
+/* ---- boutons (Design System §02) ---- */
+.vln-btn{font-family:var(--font-body);font-size:13px;letter-spacing:.02em;font-weight:500;height:44px;padding:0 24px;border-radius:2px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform var(--duration-micro) var(--ease-signature);border:0;}
+.vln-btn-ghost{background:transparent;color:var(--brass-light);border:0;padding:0;height:auto;letter-spacing:.08em;text-transform:uppercase;font-size:11px;font-family:var(--font-display);font-weight:600;border-bottom:1px solid rgba(199,173,130,.4);}
+
+/* ---- image : conteneur cover (ratio maîtrisé, aucun reflow au chargement) ---- */
+.img-wrap{position:relative;overflow:hidden;background:#221c17;}
+.img-wrap img, .img-wrap .img-fill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+/* ---- action de partage (ex. Wi-Fi) ---- */
+.share-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:15px 18px;cursor:pointer;
+  font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--brass-light);}
+.share-row svg{width:14px;height:14px;}
+
+/* ---- puce météo : transition douce lorsque la donnée réelle arrive ---- */
+.weather-chip svg{transition:opacity var(--duration-standard) var(--ease-signature);}
+.weather-chip .wc-temp{display:inline-block;min-width:1.6em;transition:opacity var(--duration-standard) var(--ease-signature);}
+
+/* ================================================================
+   RETOUR TACTILE — pression discrète + relâchement doux sur toute
+   surface tapable, à la place des effets système (surbrillance grise
+   Android, halo de focus iOS). Presse rapide (transition-duration
+   seule, propriété/courbe déjà définies par chaque composant plus
+   haut) ; le relâchement reprend la durée d'origine du composant,
+   plus lente — d'où la sensation "ressort" plutôt qu'un simple flash.
+   ================================================================ */
+*{-webkit-tap-highlight-color:transparent;}
+a,button,.glass-card,.qa-item,.p-card,.p-action,.rec-tab,.contact-row,
+.emergency-row,.location-row,.acc-head,.copy-row,.share-row,.primary-action,
+.vln-btn,.back-affordance{
+  touch-action:manipulation; -webkit-user-select:none; user-select:none;
+}
+
+.glass-card:active,.p-card:active,.contact-row:active,.emergency-row:active,
+.location-row:active,.copy-row:active,.primary-action:active,.acc-head:active{
+  transform:scale(.982); transition-duration:110ms;
+}
+.qa-item:active,.rec-tab:active,.p-action:active,.vln-btn:active,.share-row:active,
+.back-affordance:active{
+  transform:scale(.94); transition-duration:90ms;
+}
+.qa-item{transition:transform 260ms var(--ease-signature);}
+.rec-tab,.contact-row,.emergency-row,.location-row,.acc-head,.primary-action{
+  transition:transform 260ms var(--ease-signature);
+}
+
+/* survol réel disponible (souris/trackpad) : pas de compression tactile parasite */
+@media (hover:hover) and (pointer:fine){
+  .glass-card:active,.p-card:active,.contact-row:active,.emergency-row:active,
+  .location-row:active,.copy-row:active,.primary-action:active,.acc-head:active,
+  .qa-item:active,.rec-tab:active,.p-action:active,.vln-btn:active,.share-row:active,
+  .back-affordance:active{transform:none;}
+}
+@media (prefers-reduced-motion: reduce){
+  .glass-card:active,.p-card:active,.contact-row:active,.emergency-row:active,
+  .location-row:active,.copy-row:active,.primary-action:active,.acc-head:active,
+  .qa-item:active,.rec-tab:active,.p-action:active,.vln-btn:active,.share-row:active,
+  .back-affordance:active{transform:none;}
+}
+
+
+/* ================= Assistant Velnora (FAQ + relais conciergerie) ================= */
+.vln-fab{position:fixed;right:var(--space-5);bottom:calc(env(safe-area-inset-bottom,0px) + 22px);z-index:40;width:52px;height:52px;border-radius:50%;background:var(--brass-light);color:var(--ink);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.38);cursor:pointer;border:0;transition:transform 220ms var(--ease-signature),opacity 220ms var(--ease-signature);}
+.vln-fab svg{width:23px;height:23px;}
+.vln-fab:active{transform:scale(.92);}
+.vln-fab.hide{opacity:0;pointer-events:none;transform:scale(.85);}
+@media (min-width:720px){ .vln-fab{right:calc(50% - 240px + var(--space-5));} }
+
+.vln-chat-veil{position:fixed;inset:0;z-index:49;background:rgba(10,9,8,.5);opacity:0;pointer-events:none;transition:opacity 260ms var(--ease-signature);touch-action:none;}
+.vln-chat-veil.show{opacity:1;pointer-events:auto;}
+
+.vln-chat{position:fixed;left:0;right:0;bottom:0;z-index:50;max-height:78vh;display:flex;flex-direction:column;background:var(--ink-2);border-top:1px solid var(--hair);border-radius:16px 16px 0 0;box-shadow:0 -12px 30px rgba(0,0,0,.4);transform:translateY(105%);transition:transform 380ms var(--ease-signature);overscroll-behavior:contain;}
+.vln-chat.show{transform:translateY(0);}
+.vln-chat.vln-chat-dragging{transition:none;}
+@media (min-width:720px){ .vln-chat{left:50%;margin-left:-240px;width:100%;max-width:480px;} }
+
+.vln-chat-handle{flex-shrink:0;display:flex;justify-content:center;padding:10px 0 2px;cursor:grab;touch-action:none;}
+.vln-chat-handle::before{content:"";width:36px;height:4px;border-radius:3px;background:var(--hair);}
+
+.vln-chat-head{display:flex;align-items:center;gap:12px;padding:10px var(--space-5) 12px;border-bottom:1px solid var(--hair);flex-shrink:0;cursor:grab;touch-action:none;}
+.vln-chat-head .av{width:34px;height:34px;border-radius:50%;background:var(--brass-light);color:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.vln-chat-head .av svg{width:16px;height:16px;display:block;}
+.vln-chat-head .id{flex:1;min-width:0;}
+.vln-chat-head .nm{font-family:var(--font-body);font-size:14.5px;font-weight:400;color:var(--paper);}
+.vln-chat-head .st{font-family:var(--font-display);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone-dim);margin-top:2px;}
+.vln-chat-close{width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:var(--stone-dim);cursor:pointer;flex-shrink:0;}
+.vln-chat-close svg{width:18px;height:18px;}
+
+.vln-chat-body{flex:1;overflow-y:auto;padding:16px var(--space-5);display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.vln-msg{max-width:82%;font-family:var(--font-body);font-size:13.5px;font-weight:300;line-height:1.55;padding:10px 13px;border-radius:12px;}
+.vln-msg-bot{align-self:flex-start;background:var(--ink-3);color:var(--paper-2);border:1px solid var(--hair);border-bottom-left-radius:3px;}
+.vln-msg-user{align-self:flex-end;background:var(--brass-light);color:var(--ink);border-bottom-right-radius:3px;}
+.vln-msg-wa-btn{display:flex;align-items:center;gap:7px;margin-top:9px;padding:9px 12px;background:transparent;border:1px solid rgba(199,173,130,.4);border-radius:8px;font-family:var(--font-display);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--brass-light);cursor:pointer;width:100%;text-align:left;}
+.vln-msg-wa-btn:active{background:var(--brass-light);color:var(--ink);border-color:var(--brass-light);}
+
+.vln-chips{display:flex;flex-wrap:wrap;gap:7px;padding:2px var(--space-5) 12px;flex-shrink:0;}
+.vln-chip{font-family:var(--font-display);font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--stone-dim);border:1px solid var(--hair);border-radius:20px;padding:8px 13px;cursor:pointer;white-space:nowrap;transition:color var(--duration-micro) var(--ease-signature),border-color var(--duration-micro) var(--ease-signature);}
+.vln-chip:active{color:var(--ink);background:var(--brass-light);border-color:var(--brass-light);}
+
+.vln-human-row{margin:0 var(--space-5) 12px;padding:11px 13px;display:flex;align-items:center;gap:10px;border:1px dashed var(--hair);border-radius:10px;cursor:pointer;flex-shrink:0;}
+.vln-human-row svg{width:16px;height:16px;color:var(--brass-light);flex-shrink:0;}
+.vln-human-row span{font-family:var(--font-body);font-size:12px;font-weight:300;color:var(--stone-dim);}
+
+.vln-chat-input{display:flex;align-items:center;gap:9px;padding:12px var(--space-5) calc(env(safe-area-inset-bottom,0px) + 14px);border-top:1px solid var(--hair);flex-shrink:0;}
+.vln-msg-typing{display:flex;align-items:center;gap:4px;padding:13px 15px;}
+.vln-msg-typing span{width:6px;height:6px;border-radius:50%;background:var(--stone-dim);opacity:.5;animation:vln-typing-bounce 1.1s var(--ease-signature) infinite;}
+.vln-msg-typing span:nth-child(2){animation-delay:.15s;}
+.vln-msg-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes vln-typing-bounce{0%,60%,100%{transform:translateY(0);opacity:.5;}30%{transform:translateY(-4px);opacity:1;}}
+@media (prefers-reduced-motion: reduce){
+  .vln-msg-typing span{animation:none;opacity:.7;}
+}
+
+.vln-chat-input input:disabled{opacity:.6;}
+.vln-chat-input button:disabled{opacity:.5;cursor:default;}
+
+.vln-chat-input input{flex:1;min-width:0;background:var(--ink-3);border:1px solid var(--hair);border-radius:20px;padding:11px 15px;font-family:var(--font-body);font-size:16px;font-weight:300;color:var(--paper);}
+.vln-chat-input input::placeholder{color:var(--guide);}
+.vln-chat-input button{width:38px;height:38px;border-radius:50%;background:var(--brass-light);color:var(--ink);border:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;}
+.vln-chat-input button svg{width:16px;height:16px;}
+
+/* Icônes SVG : suppression de l'espace de ligne par défaut (inline) qui décale
+   légèrement le centrage vertical dans les conteneurs flex (ex: avatar du chat). */
+svg{display:block;}
+
+/* Empêche le zoom automatique iOS/Safari au focus d'un champ de saisie
+   (déclenché par tout input avec font-size < 16px). */
+.vln-chat-input input{font-size:16px;}
+@media (min-width:480px){ .vln-chat-input input{font-size:13.5px;} }
+
+/* ================= Liquid Glass — groupes premium (Guide du Chalet, etc.) =================
+   Inspiré du langage "verre liquide" des dernières interfaces iOS : matière translucide,
+   profondeur en couches, reflet spéculaire discret, coins continus. Réservé aux écrans où
+   le contenu est structuré (regroupements thématiques) — jamais plaqué pour décorer. */
+
+.glass-group-label{font-family:var(--font-display);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass-light);margin:28px 4px 11px;font-weight:600;}
+.glass-group-label:first-child{margin-top:4px;}
+
+.glass-group{
+  position:relative; border-radius:20px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(239,236,229,.055) 0%, rgba(239,236,229,.02) 100%);
+  border:1px solid rgba(239,236,229,.09);
+  backdrop-filter:blur(18px) saturate(140%); -webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 24px 40px -28px rgba(0,0,0,.65);
+}
+.glass-group::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(239,236,229,.5) 45%, rgba(199,173,130,.6) 55%, transparent);
+  opacity:.5; pointer-events:none;
+}
+
+.glass-row{display:flex;align-items:center;gap:13px;padding:15px 16px;cursor:pointer;position:relative;}
+.glass-row + .glass-row{border-top:1px solid rgba(239,236,229,.07);}
+.glass-icon{
+  width:33px;height:33px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg, var(--brass-light) 0%, #8a6f47 100%);
+  box-shadow:0 2px 7px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.35), inset 0 -6px 10px -6px rgba(0,0,0,.35);
+}
+.glass-icon svg{width:16px;height:16px;color:#1c1812;stroke-width:2;}
+.glass-row .gr-txt{flex:1;min-width:0;}
+.glass-row .gr-ttl{font-family:var(--font-body);font-size:14.5px;font-weight:400;color:var(--paper);transition:color var(--duration-standard) var(--ease-signature);}
+.acc-item.open .gr-ttl{color:var(--brass-light);}
+.glass-row .gr-sub{font-family:var(--font-body);font-size:11.5px;font-weight:300;color:var(--stone-dim);margin-top:2px;line-height:1.4;}
+.glass-chev{width:10px;height:10px;flex-shrink:0;color:var(--stone-dim);transition:transform 480ms var(--ease-signature);}
+.acc-item.open .glass-chev{transform:rotate(180deg);}
+.glass-group .acc-body-in{padding:0 16px 18px 62px;}
+.glass-group .acc-item{border-top-color:rgba(239,236,229,.07);}
